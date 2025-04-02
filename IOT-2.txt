@@ -1,0 +1,61 @@
+// C++ code
+//
+
+// Definição dos pinos
+int pino = A0;
+int mais = 12;
+int menos = 11;
+int led = 13;
+
+// Variáveis globais
+float valorPino = 0.00;
+float setPoint = 75.00;
+int anteriorMais = LOW;
+int anteriorMenos = LOW;
+
+void setup()
+{
+  pinMode(led, OUTPUT);
+  pinMode(pino, INPUT);
+  pinMode(mais, INPUT);
+  pinMode(menos, INPUT);
+  Serial.begin(9600);
+}
+
+void potenciometro(){
+  
+  valorPino = analogRead(pino);
+  float valorconvertido = map(valorPino,0,1023,0,100);
+  Serial.print(valorconvertido);
+  Serial.println("%");
+  if(valorconvertido > setPoint){
+  	digitalWrite(led,HIGH);
+  }else{
+  	digitalWrite(led,LOW);    
+  }
+}
+
+void loop()
+{
+  potenciometro();
+  
+  int estadoBotaoMais = digitalRead(mais);
+  int estadoBotaoMenos = digitalRead(menos);
+  
+  // Se o botão "mais" foi pressionado (transição LOW -> HIGH)
+  if (estadoBotaoMais == HIGH && anteriorMais == LOW) {
+    setPoint ++;
+  }
+
+  // Se o botão "menos" foi pressionado (transição LOW -> HIGH)
+  if (estadoBotaoMenos == HIGH && anteriorMenos == LOW) {
+    setPoint --;
+  }
+  
+  Serial.print(setPoint);
+  Serial.print("--");
+
+  // Atualiza os estados anteriores dos botões
+  anteriorMais = estadoBotaoMais;
+  anteriorMenos = estadoBotaoMenos;
+}
